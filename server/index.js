@@ -3,7 +3,8 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
-
+const authRoutes = require("./routes/auth");
+const donorRoutes = require("./routes/donors");
 // Load environment variables from .env file
 // Must be called before anything else
 dotenv.config();
@@ -29,7 +30,8 @@ app.get("/", (req, res) => {
     status: "success"
   });
 });
-
+app.use("/api/auth", authRoutes);
+app.use("/api/donors", donorRoutes);
 // GET PORT FROM .env OR USE 5000
 const PORT = process.env.PORT || 5000;
 
