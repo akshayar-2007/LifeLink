@@ -14,6 +14,10 @@ const Navbar = () => {
   useEffect(() => {
     if (isLoggedIn) {
       fetchUnreadCount();
+      const interval = setInterval(fetchUnreadCount, 30000);
+
+    // Cleanup interval when component unmounts
+    return () => clearInterval(interval);
     }
   }, [isLoggedIn, location.pathname]);
 
