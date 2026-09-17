@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import DonorCard from "../components/DonorCard";
 import API from "../utils/api";
-
+import { DonorCardSkeleton } from "../components/Skeleton";
 const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 const RADIUS_OPTIONS = [10, 25, 50, 100];
 
@@ -24,6 +24,7 @@ const SearchDonors = () => {
   const [locationLoading, setLocationLoading] = useState(false);
 
   // Auto search when page loads with user's city
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (user?.city) {
       handleSearch();
@@ -139,11 +140,10 @@ const SearchDonors = () => {
               {/* "All" button */}
               <button
                 onClick={() => setSelectedBloodGroup("")}
-                className={`px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all ${
-                  selectedBloodGroup === ""
-                    ? "bg-red-600 text-white border-red-600"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-red-300"
-                }`}
+                className={`px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all ${selectedBloodGroup === ""
+                  ? "bg-red-600 text-white border-red-600"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-red-300"
+                  }`}
               >
                 All
               </button>
@@ -153,11 +153,10 @@ const SearchDonors = () => {
                 <button
                   key={bg}
                   onClick={() => setSelectedBloodGroup(bg)}
-                  className={`px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all ${
-                    selectedBloodGroup === bg
-                      ? "bg-red-600 text-white border-red-600"
-                      : "bg-white text-gray-600 border-gray-200 hover:border-red-300"
-                  }`}
+                  className={`px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all ${selectedBloodGroup === bg
+                    ? "bg-red-600 text-white border-red-600"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-red-300"
+                    }`}
                 >
                   {bg}
                 </button>
@@ -192,11 +191,10 @@ const SearchDonors = () => {
               <button
                 onClick={handleGetLocation}
                 disabled={locationLoading}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border-2 transition-all ${
-                  useLocation
-                    ? "bg-blue-600 text-white border-blue-600"
-                    : "bg-white text-blue-600 border-blue-300 hover:bg-blue-50"
-                } ${locationLoading ? "opacity-50" : ""}`}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border-2 transition-all ${useLocation
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white text-blue-600 border-blue-300 hover:bg-blue-50"
+                  } ${locationLoading ? "opacity-50" : ""}`}
               >
                 {locationLoading ? (
                   <>⏳ Getting location...</>
@@ -275,13 +273,20 @@ const SearchDonors = () => {
         {/* ── RESULTS ───────────────────────── */}
 
         {/* Loading State */}
-        {loading && (
+        {/*{loading && (
           <div className="text-center py-12">
             <div className="text-4xl mb-3 animate-pulse">🩸</div>
             <p className="text-gray-500">Searching for donors...</p>
           </div>
-        )}
+        )}*/}
 
+        {loading && (
+          <div className="space-y-4">
+            {[1, 2, 3].map(i => (
+              <DonorCardSkeleton key={i} />
+            ))}
+          </div>
+        )}
         {/* Results Header */}
         {!loading && searched && (
           <div className="flex items-center justify-between mb-4">

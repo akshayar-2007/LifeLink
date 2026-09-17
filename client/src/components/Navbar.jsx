@@ -47,10 +47,10 @@ const Navbar = () => {
           <Link to="/" className="flex items-center gap-2">
             <span className="text-2xl">🩸</span>
             <span className="font-bold text-red-600 text-lg hidden sm:block">
-              Blood Donor Finder
+              LifeLink
             </span>
             <span className="font-bold text-red-600 text-lg sm:hidden">
-              BDF
+              LifeLink
             </span>
           </Link>
 

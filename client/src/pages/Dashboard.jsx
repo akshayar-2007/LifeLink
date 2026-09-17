@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import API from "../utils/api";
+import { StatsSkeleton } from "../components/Skeleton";
 
 const Dashboard = () => {
   const { user, updateUser } = useAuth();
@@ -14,6 +15,7 @@ const Dashboard = () => {
   });
 
   // Fetch data when page loads
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchDashboardData();
   }, []);
@@ -56,9 +58,9 @@ const Dashboard = () => {
       const res = await API.put("/donors/availability");
 
       // Update user in context
-      updateUser({ 
-        ...user, 
-        isAvailable: res.data.isAvailable 
+      updateUser({
+        ...user,
+        isAvailable: res.data.isAvailable
       });
 
     } catch (err) {
@@ -83,12 +85,25 @@ const Dashboard = () => {
     "O+": "bg-green-500", "O-": "bg-green-600"
   };
 
-  if (loading) {
+  /*if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4 animate-pulse">🩸</div>
           <p className="text-gray-500">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }*/
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="mb-8">
+            <div className="w-48 h-8 bg-gray-200 rounded-lg animate-pulse mb-2" />
+            <div className="w-32 h-4 bg-gray-200 rounded-lg animate-pulse" />
+          </div>
+          <StatsSkeleton />
         </div>
       </div>
     );
@@ -163,14 +178,12 @@ const Dashboard = () => {
             <button
               onClick={handleToggleAvailability}
               disabled={toggling}
-              className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors focus:outline-none ${
-                user?.isAvailable ? "bg-green-500" : "bg-gray-300"
-              } ${toggling ? "opacity-50" : ""}`}
+              className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors focus:outline-none ${user?.isAvailable ? "bg-green-500" : "bg-gray-300"
+                } ${toggling ? "opacity-50" : ""}`}
             >
               <span
-                className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition-transform ${
-                  user?.isAvailable ? "translate-x-9" : "translate-x-1"
-                }`}
+                className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition-transform ${user?.isAvailable ? "translate-x-9" : "translate-x-1"
+                  }`}
               />
             </button>
           </div>
@@ -294,7 +307,7 @@ const Dashboard = () => {
                 Did you know?
               </p>
               <p className="text-red-600 text-sm mt-0.5">
-                One blood donation can save up to 3 lives. 
+                One blood donation can save up to 3 lives.
                 You can donate every 3 months safely.
               </p>
             </div>

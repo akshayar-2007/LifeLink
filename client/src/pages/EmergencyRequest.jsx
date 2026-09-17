@@ -30,6 +30,7 @@ const EmergencyRequest = () => {
   const [filterBloodGroup, setFilterBloodGroup] = useState("");
 
   // Load requests when view tab is active
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (activeTab === "view") {
       fetchRequests();
@@ -39,7 +40,7 @@ const EmergencyRequest = () => {
   const fetchRequests = async () => {
     setRequestsLoading(true);
     try {
-      const params = { };
+      const params = {};
       if (filterBloodGroup) params.bloodGroup = filterBloodGroup;
 
       const res = await API.get("/requests", { params });
@@ -119,21 +120,19 @@ const EmergencyRequest = () => {
               setActiveTab("create");
               setSubmitSuccess(null);
             }}
-            className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${
-              activeTab === "create"
+            className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "create"
                 ? "bg-white text-red-600 shadow-sm"
                 : "text-gray-500 hover:text-gray-700"
-            }`}
+              }`}
           >
             🚨 Create Request
           </button>
           <button
             onClick={() => setActiveTab("view")}
-            className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${
-              activeTab === "view"
+            className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "view"
                 ? "bg-white text-red-600 shadow-sm"
                 : "text-gray-500 hover:text-gray-700"
-            }`}
+              }`}
           >
             📋 View Requests
           </button>
@@ -205,11 +204,10 @@ const EmergencyRequest = () => {
                       <button
                         key={bg}
                         onClick={() => setForm({ ...form, bloodGroup: bg })}
-                        className={`px-4 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all ${
-                          form.bloodGroup === bg
+                        className={`px-4 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all ${form.bloodGroup === bg
                             ? "bg-red-600 text-white border-red-600"
                             : "bg-white text-gray-600 border-gray-200 hover:border-red-300"
-                        }`}
+                          }`}
                       >
                         {bg}
                       </button>
@@ -272,11 +270,10 @@ const EmergencyRequest = () => {
                     {/* Normal */}
                     <button
                       onClick={() => setForm({ ...form, urgency: "normal" })}
-                      className={`py-3 rounded-xl text-sm font-semibold border-2 transition-all ${
-                        form.urgency === "normal"
+                      className={`py-3 rounded-xl text-sm font-semibold border-2 transition-all ${form.urgency === "normal"
                           ? "bg-green-500 text-white border-green-500"
                           : "border-gray-200 text-gray-500 hover:border-green-300"
-                      }`}
+                        }`}
                     >
                       🟢 Normal
                     </button>
@@ -284,11 +281,10 @@ const EmergencyRequest = () => {
                     {/* Urgent */}
                     <button
                       onClick={() => setForm({ ...form, urgency: "urgent" })}
-                      className={`py-3 rounded-xl text-sm font-semibold border-2 transition-all ${
-                        form.urgency === "urgent"
+                      className={`py-3 rounded-xl text-sm font-semibold border-2 transition-all ${form.urgency === "urgent"
                           ? "bg-orange-500 text-white border-orange-500"
                           : "border-gray-200 text-gray-500 hover:border-orange-300"
-                      }`}
+                        }`}
                     >
                       🟠 Urgent
                     </button>
@@ -296,11 +292,10 @@ const EmergencyRequest = () => {
                     {/* Critical */}
                     <button
                       onClick={() => setForm({ ...form, urgency: "critical" })}
-                      className={`py-3 rounded-xl text-sm font-semibold border-2 transition-all ${
-                        form.urgency === "critical"
+                      className={`py-3 rounded-xl text-sm font-semibold border-2 transition-all ${form.urgency === "critical"
                           ? "bg-red-500 text-white border-red-500"
                           : "border-gray-200 text-gray-500 hover:border-red-300"
-                      }`}
+                        }`}
                     >
                       🔴 Critical
                     </button>
@@ -333,7 +328,7 @@ const EmergencyRequest = () => {
                 {/* Warning */}
                 <div className="bg-orange-50 border border-orange-200 rounded-xl px-4 py-3 mb-4">
                   <p className="text-orange-700 text-sm">
-                    ⚠️ This will send email alerts to all matching donors in your city. 
+                    ⚠️ This will send email alerts to all matching donors in your city.
                     Only use for genuine emergencies.
                   </p>
                 </div>
@@ -363,11 +358,10 @@ const EmergencyRequest = () => {
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setFilterBloodGroup("")}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${
-                    filterBloodGroup === ""
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${filterBloodGroup === ""
                       ? "bg-red-600 text-white border-red-600"
                       : "border-gray-200 text-gray-500 hover:border-red-300"
-                  }`}
+                    }`}
                 >
                   All
                 </button>
@@ -375,11 +369,10 @@ const EmergencyRequest = () => {
                   <button
                     key={bg}
                     onClick={() => setFilterBloodGroup(bg)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${
-                      filterBloodGroup === bg
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${filterBloodGroup === bg
                         ? "bg-red-600 text-white border-red-600"
                         : "border-gray-200 text-gray-500 hover:border-red-300"
-                    }`}
+                      }`}
                   >
                     {bg}
                   </button>

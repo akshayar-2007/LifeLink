@@ -4,60 +4,63 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-
 // ─────────────────────────────────────
-// @route   GET /api/notifications
-// @desc    Get my notifications
-// @access  Private
+// IMPORTANT: /read-all and /unread-count
+// MUST come BEFORE /:id routes
+// Otherwise "read-all" is treated as an :id
 // ─────────────────────────────────────
-router.get("/", authMiddleware, async (req, res) => {
-  try {
-    const notifications = await Notification.find({ 
-      userId: req.user.id 
-    })
-    .sort({ createdAt: -1 })  // newest first
-    .limit(30);               // last 30 notifications
 
-    res.json({
-      count: notifications.length,
-      notifications
-    });
-
-  } catch (error) {
-    console.error("Get notifications error:", error.message);
-    res.status(500).json({ msg: "Server error" });
-  }
-});
-
-
-// ─────────────────────────────────────
-// @route   GET /api/notifications/unread-count
-// @desc    Get count of unread notifications
-// @access  Private
-// ─────────────────────────────────────
+// GET /api/notifications/unread-count
 router.get("/unread-count", authMiddleware, async (req, res) => {
   try {
-    // countDocuments is faster than find()
-    // when you only need the count
     const count = await Notification.countDocuments({
       userId: req.user.id,
       isRead: false
     });
-
     res.json({ unreadCount: count });
-
   } catch (error) {
     console.error("Unread count error:", error.message);
     res.status(500).json({ msg: "Server error" });
   }
 });
 
+// PUT /api/notifications/read-all
+router.put("/read-all", authMiddleware, async (req, res) => {
+  try {
+    const result = await Notification.updateMany(
+      { userId: req.user.id, isRead: false },
+      { $set: { isRead: true } }
+    );
+    res.json({
+      msg: "All notifications marked as read",
+      updatedCount: result.modifiedCount
+    });
+  } catch (error) {
+    console.error("Read all error:", error.message);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
 
-// ─────────────────────────────────────
-// @route   PUT /api/notifications/:id/read
-// @desc    Mark single notification as read
-// @access  Private
-// ─────────────────────────────────────
+// GET /api/notifications
+router.get("/", authMiddleware, async (req, res) => {
+  try {
+    const notifications = await Notification.find({
+      userId: req.user.id
+    })
+      .sort({ createdAt: -1 })
+      .limit(30);
+
+    res.json({
+      count: notifications.length,
+      notifications
+    });
+  } catch (error) {
+    console.error("Get notifications error:", error.message);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
+// PUT /api/notifications/:id/read
 router.put("/:id/read", authMiddleware, async (req, res) => {
   try {
     const notification = await Notification.findById(req.params.id);
@@ -66,7 +69,6 @@ router.put("/:id/read", authMiddleware, async (req, res) => {
       return res.status(404).json({ msg: "Notification not found" });
     }
 
-    // Make sure user owns this notification
     if (notification.userId.toString() !== req.user.id) {
       return res.status(403).json({ msg: "Not authorized" });
     }
@@ -74,54 +76,34 @@ router.put("/:id/read", authMiddleware, async (req, res) => {
     notification.isRead = true;
     await notification.save();
 
-    res.json({ 
+    res.json({
       msg: "Notification marked as read",
-      notification 
+      notification
     });
-
   } catch (error) {
     console.error("Mark read error:", error.message);
     res.status(500).json({ msg: "Server error" });
   }
 });
 
-
-// ─────────────────────────────────────
-// @route   PUT /api/notifications/read-all
-// @desc    Mark ALL notifications as read
-// @access  Private
-// ─────────────────────────────────────
-router.put("/read-all", authMiddleware, async (req, res) => {
+// DELETE /api/notifications/all → clear all
+// MUST come before /:id
+router.delete("/all", authMiddleware, async (req, res) => {
   try {
-    // updateMany updates multiple documents at once
-    // Much faster than updating one by one
-    const result = await Notification.updateMany(
-      { 
-        userId: req.user.id,
-        isRead: false          // only update unread ones
-      },
-      { 
-        $set: { isRead: true } 
-      }
-    );
-
-    res.json({ 
-      msg: "All notifications marked as read",
-      updatedCount: result.modifiedCount
+    const result = await Notification.deleteMany({
+      userId: req.user.id
     });
-
+    res.json({
+      msg: "All notifications deleted",
+      deletedCount: result.deletedCount
+    });
   } catch (error) {
-    console.error("Read all error:", error.message);
+    console.error("Delete all error:", error.message);
     res.status(500).json({ msg: "Server error" });
   }
 });
 
-
-// ─────────────────────────────────────
-// @route   DELETE /api/notifications/:id
-// @desc    Delete a notification
-// @access  Private
-// ─────────────────────────────────────
+// DELETE /api/notifications/:id
 router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const notification = await Notification.findById(req.params.id);
@@ -135,37 +117,11 @@ router.delete("/:id", authMiddleware, async (req, res) => {
     }
 
     await notification.deleteOne();
-
     res.json({ msg: "Notification deleted" });
-
   } catch (error) {
     console.error("Delete notification error:", error.message);
     res.status(500).json({ msg: "Server error" });
   }
 });
-
-
-// ─────────────────────────────────────
-// @route   DELETE /api/notifications
-// @desc    Delete ALL my notifications
-// @access  Private
-// ─────────────────────────────────────
-router.delete("/", authMiddleware, async (req, res) => {
-  try {
-    const result = await Notification.deleteMany({ 
-      userId: req.user.id 
-    });
-
-    res.json({ 
-      msg: "All notifications deleted",
-      deletedCount: result.deletedCount
-    });
-
-  } catch (error) {
-    console.error("Delete all error:", error.message);
-    res.status(500).json({ msg: "Server error" });
-  }
-});
-
 
 module.exports = router;
