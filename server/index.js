@@ -2,13 +2,13 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
-const { generalLimiter } = require("./middleware/rateLimiter");
+
 
 const authRoutes = require("./routes/auth");
 const donorRoutes = require("./routes/donors");
 const requestRoutes = require("./routes/requests");
 const notificationRoutes = require("./routes/notifications");
-const adminRoutes = require("./routes/admin");
+
 
 dotenv.config();
 connectDB();
@@ -33,7 +33,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
-app.use(generalLimiter);
+
 
 // Health check
 app.get("/", (req, res) => {
@@ -49,7 +49,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/donors", donorRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/notifications", notificationRoutes);
-app.use("/api/admin", adminRoutes);
+
 
 // Global error handler
 app.use((err, req, res, next) => {
